@@ -1,5 +1,6 @@
 const Book = require("./model");
-const { findAllBooks, findBookById, createOneBook, deleteBook } = Book();
+const { findAllBooks, findBookById, createOneBook, deleteBook, ammendedBook } =
+  Book();
 
 function findAll(req, res) {
   findAllBooks((books) => {
@@ -28,4 +29,12 @@ function deleteOneById(req, res) {
   });
 }
 
-module.exports = { findAll, getById, createOne, deleteOneById };
+function ammendOneById(req, res) {
+  const bookId = req.params.id;
+  const bookData = req.body;
+  ammendedBook(bookId, bookData, (ammendedbook) => {
+    res.json({ Book: ammendedbook });
+  });
+}
+
+module.exports = { findAll, getById, createOne, deleteOneById, ammendOneById };

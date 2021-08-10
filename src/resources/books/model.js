@@ -85,6 +85,20 @@ function Book() {
       .catch(console.error);
   }
 
+  function ammendedBook(bookId, bookData, callbackfunction) {
+    const { title } = bookData;
+    const sql = `
+    UPDATE books
+    SET title = $1
+    WHERE id = $2
+    `;
+    db.query(sql, [title, bookId])
+      .then((result) => {
+        callbackfunction(result.rows[0]);
+      })
+      .catch(console.error);
+  }
+
   createTable();
   mockData();
 
@@ -93,6 +107,7 @@ function Book() {
     findBookById,
     createOneBook,
     deleteBook,
+    ammendedBook,
   };
 }
 
