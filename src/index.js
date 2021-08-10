@@ -22,9 +22,9 @@ app.use(express.json());
 
 app.use("/books", booksRouter);
 
-app.get("*", (req, res) => {
-  res.json({ ok: "get all working" });
-});
+// app.get("*", (req, res) => {
+//   res.json({ ok: "get all working" });
+// });
 
 /* START SERVER */
 

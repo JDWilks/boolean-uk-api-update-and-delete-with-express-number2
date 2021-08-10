@@ -4,7 +4,7 @@ const { buildBooksDatabase } = require("../../utils/mockData");
 function Book() {
   function createTable() {
     const sql = `
-      DROP TABLE books;
+    DROP TABLE IF EXISTS books;
       
       CREATE TABLE IF NOT EXISTS books (
         id              SERIAL        PRIMARY KEY,
@@ -36,27 +36,51 @@ function Book() {
     });
   }
 
-  // function findAllBooks(callbackfunction) {
-  //   const sql = `
-  //   SELECT * FROM books
-  //   RETURNING *
-  //   `;
-  //   db.query(sql)
-  //     .then((result) => {
-  //       callbackfunction(result.rows);
-  //     })
-  //     .catch(console.error);
-  // }
+  function findAllBooks(callbackfunction) {
+    const sql = `
+    SELECT * FROM books
+    `;
+    db.query(sql)
+      .then((result) => {
+        callbackfunction(result.rows);
+      })
+      .catch(console.error);
+  }
 
   function findBookById(bookId, callbackfunction) {
     const sql = `
-    SELECT * FROM products
+    SELECT * FROM books
     WHERE ID = ($1);
     `;
-    dbClient
-      .query(sql, [bookId])
+    db.query(sql, [bookId])
       .then((result) => {
         callbackfunction(result.rows[0]);
+      })
+      .catch(console.error);
+  }
+
+  function createOneBook(newBook, callbackfunction) {
+    const { title, type, author, topic, publicationdate } = newBook;
+    const sql = `
+    INSERT INTO books (title, type, author, topic, publicationdate)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *
+    `;
+    db.query(sql, [title, type, author, topic, publicationdate])
+      .then((result) => {
+        callbackfunction(result.rows[0]);
+      })
+      .catch(console.error);
+  }
+
+  function deleteBook(bookId, callbackfunction) {
+    const sql = `
+      DELETE FROM books
+      WHERE id = $1
+    `;
+    db.query(sql, [bookId])
+      .then((result) => {
+        callbackfunction(console.log("you deleted a book!", result));
       })
       .catch(console.error);
   }
@@ -65,8 +89,10 @@ function Book() {
   mockData();
 
   return {
-    // findAllBooks,
+    findAllBooks,
     findBookById,
+    createOneBook,
+    deleteBook,
   };
 }
 
